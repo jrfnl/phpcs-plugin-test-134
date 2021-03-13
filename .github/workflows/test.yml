@@ -1,0 +1,114 @@
+name: issue-test
+
+on:
+  push:
+  # Allow manually triggering the workflow.
+  workflow_dispatch:
+
+jobs:
+  test1:
+    runs-on: ubuntu-20.04
+    
+    name: "test with minimal dependencies"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          coverage: none
+
+      - name: 'Install dependencies'
+        run: composer require --update-with-all-dependencies dealerdirect/phpcodesniffer-composer-installer automattic/vipwpcs phpcompatibility/phpcompatibility-wp
+
+      - name: Verify
+        run: vendor/bin/phpcs -i
+
+  test2:
+    runs-on: ubuntu-20.04
+
+    name: "test with extended dependencies"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          coverage: none
+
+      - name: 'Install dependencies'
+        run: composer require --update-with-all-dependencies "dealerdirect/phpcodesniffer-composer-installer" "wp-coding-standards/wpcs" "automattic/vipwpcs" "phpcompatibility/php-compatibility" "phpcompatibility/phpcompatibility-paragonie" "phpcompatibility/phpcompatibility-wp"
+
+      - name: Verify
+        run: vendor/bin/phpcs -i
+
+  test3:
+    runs-on: ubuntu-20.04
+
+    name: "test with extended dependencies with no-ansi"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          coverage: none
+
+      - name: 'Install dependencies'
+        run: composer require --update-with-all-dependencies "dealerdirect/phpcodesniffer-composer-installer" "wp-coding-standards/wpcs" "automattic/vipwpcs" "phpcompatibility/php-compatibility" "phpcompatibility/phpcompatibility-paragonie" "phpcompatibility/phpcompatibility-wp" --no-ansi
+
+      - name: Verify
+        run: vendor/bin/phpcs -i
+
+  test4:
+    runs-on: ubuntu-20.04
+
+    name: "test with extended dependencies with no-ansi and no-progress"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          coverage: none
+
+      - name: 'Install dependencies'
+        run: composer require --update-with-all-dependencies "dealerdirect/phpcodesniffer-composer-installer" "wp-coding-standards/wpcs" "automattic/vipwpcs" "phpcompatibility/php-compatibility" "phpcompatibility/phpcompatibility-paragonie" "phpcompatibility/phpcompatibility-wp" --no-ansi --no-progress
+
+      - name: Verify
+        run: vendor/bin/phpcs -i
+
+  test5:
+    runs-on: ubuntu-20.04
+
+    name: "test with all plus bin env"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          coverage: none
+
+      - name: 'Install dependencies'
+        env:
+          COMPOSER_BIN_DIR: 'bin'
+        run: composer require --update-with-all-dependencies "dealerdirect/phpcodesniffer-composer-installer" "wp-coding-standards/wpcs" "automattic/vipwpcs" "phpcompatibility/php-compatibility" "phpcompatibility/phpcompatibility-paragonie" "phpcompatibility/phpcompatibility-wp" --no-ansi --no-progress
+
+      - name: Verify
+        run: bin/phpcs -i
